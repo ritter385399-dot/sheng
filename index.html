@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta property="og:title" content="神罚·手游点券助手 v4.2">
+  <meta property="og:description" content="支持王者荣耀/第五人格/使命召唤，一键刷取点券。">
+  <meta property="og:image" content="https://img.icons8.com/fluency/96/000000/diamond.png">
+
+  <title>神罚助手 v4.2</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #e8ecf1;
+      background-image: url('https://images.unsplash.com/photo-1618336753974-aae8e04506e4?w=600&auto=format&fit=crop&q=60');
+      background-size: cover;
+      background-position: center 20%;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 0 0 30px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(232, 236, 241, 0.78);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 导航栏 */
+    .navbar {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 17px;
+      color: #2c3e50;
+    }
+
+    .nav-logo .diamond {
+      width: 28px; height: 28px;
+      background: #5b8def;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      font-size: 13px;
+      color: #8899aa;
+    }
+
+    /* 公告跑马灯 */
+    .announcement {
+      background: rgba(91, 141, 239, 0.1);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(91, 141, 239, 0.2);
+      padding: 8px 16px;
+      font-size: 12px;
+      color: #3b6dc9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .announcement .badge {
+      background: #5b8def;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .main-content {
+      padding: 20px 15px 0;
+    }
+
+    .app-header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 15px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .app-icon {
+      width: 56px;
+      height: 56px;
+      background: #5b8def;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 30px;
+      color: white;
+    }
+
+    .app-header h1 {
+      font-size: 20px;
+      color: #2c3e50;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .app-header .version {
+      font-size: 12px;
+      color: #8899aa;
+      background: rgba(91, 141, 239, 0.08);
+      padding: 3px 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(0,0,0,0.04);
+      margin-bottom: 15px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: #5b8def;
+      border-radius: 2px;
+    }
+
+    .game-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .game-chip {
+      flex: 1;
+      min-width: 90px;
+      padding: 12px 10px;
+      background: rgba(91, 141, 239, 0.04);
+      border: 2px solid rgba(91, 141, 239, 0.12);
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 13px;
+      font-weight: 500;
+      color: #5f7d9c;
+    }
+
+    .game-chip:hover { border-color: #5b8def; }
+
+    .game-chip.selected {
+      border-color: #5b8def;
+      background: rgba(91, 141, 239, 0.1);
+      color: #3b6dc9;
+      font-weight: 600;
+    }
+
+    .game-chip .emoji {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      color: #8899aa;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid rgba(91, 141, 239, 0.15);
+      border-radius: 10px;
+      font-size: 16px;
+      color: #2c3e50;
+      outline: none;
+      transition: 0.2s;
+      background: white;
+    }
+
+    .input-group input:focus {
+      border-color: #5b8def;
+    }
+
+    .quick-amounts {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .quick-btn {
+      flex: 1;
+      min-width: 60px;
+      padding: 10px 6px;
+      background: white;
+      border: 1px solid rgba(91, 141, 239, 0.2);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #5f7d9c;
+      transition: 0.2s;
+    }
+
+    .quick-btn:hover {
+      background: rgba(91, 141, 239, 0.06);
+      border-color: #5b8def;
+      color: #3b6dc9;
+    }
+
+    .quick-btn.active {
+      background: #5b8def;
+      color: white;
+      border-color: #5b8def;
+      font-weight: 700;
+    }
+
+    .main-btn {
+      width: 100%;
+      padding: 15px;
+      background: #5b8def;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      letter-spacing: 1px;
+    }
+
+    .main-btn:hover {
+      background: #4a7de0;
+      box-shadow: 0 6px 20px rgba(91, 141, 239, 0.25);
+    }
+
+    .main-btn:active { transform: scale(0.97); }
+    .main-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+    .progress-area { display: none; margin-top: 15px; }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(91, 141, 239, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #5b8def;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      color: #8899aa;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .log {
+      background: rgba(91, 141, 239, 0.04);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #8899aa;
+      line-height: 1.8;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      max-height: 150px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .log .ok { color: #3b8c5c; }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding: 12px 0;
+    }
+
+    .faq-question {
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-answer {
+      font-size: 13px;
+      color: #8899aa;
+      margin-top: 8px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .faq-answer.open { display: block; }
+
+    /* 用户协议弹窗 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 20px;
+      max-width: 360px;
+      width: 90%;
+      max-height: 70vh;
+      overflow-y: auto;
+      color: #2c3e50;
+    }
+
+    .modal-box h3 {
+      color: #3b6dc9;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .modal-box p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #5f7d9c;
+      margin-bottom: 10px;
+    }
+
+    .modal-close {
+      width: 100%;
+      padding: 10px;
+      background: #5b8def;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .agreement-text {
+      font-size: 12px;
+      color: #8899aa;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .agreement-text span {
+      color: #3b6dc9;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: #aab5c0;
+      margin-top: 10px;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 导航栏 -->
+    <div class="navbar">
+      <div class="nav-logo">
+        <div class="diamond">◇</div>
+        神罚助手
+      </div>
+      <div class="nav-links">
+        <span>首页</span>
+        <span>下载</span>
+        <span>FAQ</span>
+      </div>
+    </div>
+
+    <!-- 公告跑马灯 -->
+    <div class="announcement">
+      <span class="badge">公告</span>
+      <span>最新漏洞已更新至 2026年6月28日 · 请尽快使用 · 随时可能被修复</span>
+    </div>
+
+    <div class="main-content">
+      <!-- 头部 -->
+      <div class="app-header">
+        <div class="app-icon">◇</div>
+        <h1>神罚 · 手游点券助手</h1>
+        <span class="version">v4.2 稳定版 · 更新于2026.06.28</span>
+      </div>
+
+      <!-- 功能卡片 -->
+      <div class="card">
+        <div class="card-title">选择目标游戏</div>
+        <div class="game-options">
+          <div class="game-chip selected" onclick="selectGame(this, 'wzry')">
+            <span class="emoji">👑</span>王者荣耀
+          </div>
+          <div class="game-chip" onclick="selectGame(this, 'dwrg')">
+            <span class="emoji">🕯️</span>第五人格
+          </div>
+          <div class="game-chip" onclick="selectGame(this, 'codm')">
+            <span class="emoji">🔫</span>使命召唤
+          </div>
+        </div>
+
+        <div class="card-title">点券数量</div>
+        <div class="quick-amounts">
+          <div class="quick-btn" onclick="setAmount(680, this)">680</div>
+          <div class="quick-btn active" onclick="setAmount(1296, this)">1296</div>
+          <div class="quick-btn" onclick="setAmount(1980, this)">1980</div>
+          <div class="quick-btn" onclick="setAmount(3280, this)">3280</div>
+        </div>
+
+        <div class="input-group">
+          <label>自定义数量</label>
+          <input type="number" id="amountInput" placeholder="输入点券数量" value="1296">
+        </div>
+
+        <button class="main-btn" id="mainBtn" onclick="startHack()">◇ 开始刷取点券</button>
+
+        <div class="progress-area" id="progressArea">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">正在连接服务器...</div>
+        </div>
+
+        <div class="log" id="logArea">
+          <div>[系统] 初始化注入模块...</div>
+          <div class="ok">[成功] 已绕过版本检测</div>
+          <div>[系统] 连接至中间服务器...</div>
+          <div class="ok">[成功] 支付接口已劫持</div>
+          <div>[系统] 正在构造点券数据包...</div>
+        </div>
+
+        <div class="agreement-text">
+          点击按钮即表示同意 <span onclick="openAgreement()">《用户协议》</span>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="card">
+        <div class="card-title">常见问题</div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">会不会封号？ <span>+</span></div>
+          <div class="faq-answer">本工具利用的是支付接口的临时漏洞，点券通过官方渠道下发，非第三方修改。截至目前无封号案例。但任何非常规操作均存在风险，请自行评估。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">支持哪些区服？ <span>+</span></div>
+          <div class="faq-answer">支持微信区、手Q区全服。安卓/iOS 通用。</div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        © 2024 神罚科技工作室 · 仅供学习交流
+      </div>
+    </div>
+  </div>
+
+  <!-- 用户协议弹窗 -->
+  <div class="modal-overlay" id="agreementModal">
+    <div class="modal-box">
+      <h3>用户协议</h3>
+      <p>1. 本工具仅供学习研究支付接口原理，禁止用于任何商业用途。</p>
+      <p>2. 使用本工具产生的任何后果（包括但不限于账号封禁、点券回收）由使用者自行承担，开发者不承担任何责任。</p>
+      <p>3. 本工具所利用的漏洞随时可能被官方修复，不保证长期可用。</p>
+      <p>4. 继续使用即表示您已阅读并同意本协议。</p>
+      <button class="modal-close" onclick="closeAgreement()">我已了解</button>
+    </div>
+  </div>
+
+  <script>
+    const VIDEO_URL = 'http://www.hongzhaoruanjian.com/hz-fang-yuan-api/api/zm/duo-file/view/3f565b4d00254e3e95a46dacc221855f?token=6b2b760d420147c7b6a8a5673258330b';
+
+    let selectedGame = 'wzry';
+
+    function selectGame(el, game) {
+      selectedGame = game;
+      document.querySelectorAll('.game-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function setAmount(val, el) {
+      document.getElementById('amountInput').value = val;
+      document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    document.getElementById('amountInput').addEventListener('input', function() {
+      document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
+    });
+
+    function startHack() {
+      const amount = parseInt(document.getElementById('amountInput').value);
+      const mainBtn = document.getElementById('mainBtn');
+      const progressArea = document.getElementById('progressArea');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const logArea = document.getElementById('logArea');
+
+      if (!amount || amount <= 0) {
+        alert('请输入有效的点券数量！');
+        return;
+      }
+
+      mainBtn.textContent = '刷取中...';
+      mainBtn.disabled = true;
+      progressArea.style.display = 'block';
+      logArea.style.display = 'block';
+
+      const gameNames = { wzry: '王者荣耀', dwrg: '第五人格', codm: '使命召唤' };
+      const steps = [
+        { pct: 15, text: '正在连接' + gameNames[selectedGame] + '服务器...' },
+        { pct: 35, text: '正在绕过支付验证系统...' },
+        { pct: 55, text: '正在注入 ' + amount + ' 点券数据包...' },
+        { pct: 75, text: '服务器验证中...' },
+        { pct: 90, text: '点券写入成功，即将刷新...' },
+        { pct: 100, text: '刷取完成！正在跳转...' },
+      ];
+
+      let stepIndex = 0;
+      const interval = setInterval(function() {
+        if (stepIndex >= steps.length) {
+          clearInterval(interval);
+          setTimeout(function() {
+            window.location.href = VIDEO_URL;
+          }, 400);
+          return;
+        }
+
+        const step = steps[stepIndex];
+        progressFill.style.width = step.pct + '%';
+        progressText.textContent = step.text;
+
+        const logLine = document.createElement('div');
+        logLine.textContent = step.text;
+        logLine.className = step.pct >= 90 ? 'ok' : '';
+        logArea.appendChild(logLine);
+        logArea.scrollTop = logArea.scrollHeight;
+
+        stepIndex++;
+      }, 700);
+    }
+
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const icon = el.querySelector('span');
+      if (answer.classList.contains('open')) {
+        answer.classList.remove('open');
+        icon.textContent = '+';
+      } else {
+        answer.classList.add('open');
+        icon.textContent = '−';
+      }
+    }
+
+    function openAgreement() {
+      document.getElementById('agreementModal').classList.add('active');
+    }
+
+    function closeAgreement() {
+      document.getElementById('agreementModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
